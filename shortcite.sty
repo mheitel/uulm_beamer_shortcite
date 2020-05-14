@@ -1,0 +1,169 @@
+% provides the command footshortcite
+% for citing biblatex entries (in LaTeX Beamer) in short manner
+
+% AUTHOR: Marcus Heitel
+% DATE: 04/07/2020 
+% LAST EDIT: 05/14/2020
+
+%********************************************************************************
+% the following code is an adaption from
+% https://tex.stackexchange.com/questions/45437/undesired-placement-of-footnotes-in-blocks
+
+% see also
+% http://www.khirevich.com/latex/footnote_citation/custom-numeric-comp.cbx
+% and 
+% http://www.texdev.net/2010/03/08/biblatex-numbered-citations-as-footnotes/
+
+\RequirePackage[style=numeric-comp]{biblatex}
+\ExecuteBibliographyOptions{citetracker,sorting=none}
+
+%====================================
+% NAMEFORMAT for using only lastnames
+% AUTHOR: Marcus Heitel
+%====================================
+\DeclareFieldFormat{journaltitle}{\emph{#1}}
+\DeclareNameFormat{lastname}%
+{%
+    \usebibmacro{name:family}
+     {\namepartfamily}
+     {\namepartgiven}
+     {\namepartprefix}
+     {\namepartsuffix}%
+    \usebibmacro{name:andothers}%
+}
+
+%====================================
+% bibmacro providing very short information on cited entry
+% AUTHOR: Marcus Heitel
+%====================================
+\newbibmacro*{MHshort}{%
+    %\printfield[citetitle]{labeltitle}}}
+    % print last name
+    \printnames[lastname]{author}
+    % article
+    \iffieldequalstr{entrytype}{article}%
+    {%
+	\addcomma \addspace%
+	\printfield{journaltitle}
+    }%
+    {% no articles
+	\iffieldequalstr{entrytype}{inproceedings}%
+	{%
+	    \addcomma \addspace%
+	    \printfield{booktitle}
+	}%
+	{% no article, no inproceedings
+	    \iffieldequalstr{entrytype}{incollection}%
+	    {%
+		\addcomma \addspace%
+		\printfield{booktitle}
+	    }%
+	    {% no article, no inproceedings, no incollection
+		% do nothing
+	    }%
+	}%
+    }%
+    % print year
+    \addspace
+    (\printfield{year})\addperiod%
+}
+%==========================================================%
+% \DeclareCiteCommand below creates a footnote with the  
+% very short citation info; full citation info is printed in 
+% the bibliography for all entry types.
+% AUTHOR: Marcus Heitel
+% BASED ON: Siarhei Khirevich, Philipp Lehman
+%==========================================================%
+\DeclareCiteCommand{\footshortcitetext}[\let\thefootnote\relax\mkbibfootnotetext]%
+{%
+    \usebibmacro{cite:init}%
+    \let\multicitedelim=\supercitedelim%
+    \usebibmacro{prenote}
+}%
+{%
+    \mkbibsuperscript{\thefield{labelnumber}}
+    \addnbspace%
+    \usebibmacro{citeindex}%
+    \usebibmacro{MHshort}
+}%
+{\multicitedelim}%
+{%
+    \usebibmacro{cite:dump}%
+    \usebibmacro{postnote}
+}%
+
+\let\cbx@citehook=\empty
+\newtoggle{cbx@blockcite}
+
+\renewcommand{\@makefntext}[1]{%
+  \noindent\normalfont\@thefnmark#1}
+
+%==========================================================%
+% \DeclareCiteCommand below creates a citation with the  
+% script-sized citation index and short citation info 
+% printed as a footnote; full citation info is printed in 
+% the bibliography for all entry types.
+% AUTHOR: Marcus Heitel
+% BASED ON: Siarhei Khirevich, Philipp Lehman
+%==========================================================%
+\DeclareCiteCommand{\footshortcite}[\cbx@superscript]%
+{%
+    \usebibmacro{cite:init}%
+    \let\multicitedelim=\supercitedelim%
+    \iffieldundef{prenote}%
+    {}%
+    {%
+	\BibliographyWarning{Ignoring prenote argument}%
+    }%
+    \iffieldundef{postnote}%
+    {}%
+    {%
+	\BibliographyWarning{Ignoring postnote argument}%
+    }%
+}%
+{%
+    \usebibmacro{citeindex}%
+    \usebibmacro{footshortcite}%
+    \usebibmacro{cite:comp}%
+}%
+{}%
+{%
+    \usebibmacro{cite:dump}%
+}%
+
+% AUTHOR: Siarhei Khirevich
+% EDITED BY: Marcus Heitel
+\newbibmacro*{footshortcite}%
+{%
+    \xappto\cbx@citehook%
+    {%
+	\noexpand\footshortcitetext%
+	{%
+	    \thefield{entrykey}%
+	}%
+    }%
+}%
+
+%================================
+% see https://tex.stackexchange.com/questions/45437/undesired-placement-of-footnotes-in-blocks
+%================================
+\newrobustcmd{\cbx@superscript}[1]%
+{%
+    \mkbibsuperscript{#1}%
+    \iftoggle{cbx@blockcite}
+	{}
+	{\cbx@citehook%
+	 \global\let\cbx@citehook=\empty}
+}
+\BeforeBeginEnvironment{block}{\global\toggletrue{cbx@blockcite}}
+
+\def\metabox#1{\edef\theprevdepth{\the\prevdepth}\nointerlineskip
+  \vbox to0pt{#1\vss}\prevdepth=\theprevdepth}
+
+\AfterEndEnvironment{block}
+  {\metabox{%
+     \global\togglefalse{cbx@blockcite}%
+     \cbx@citehook%
+     \global\let\cbx@citehook=\empty}}
+
+%========= EOF

@@ -1,0 +1,58 @@
+\documentclass{jdbeamer169}
+
+%% CITATION
+\usepackage[
+style=numeric-comp,
+hyperref=true, backend=biber, giveninits,
+minnames=1, maxnames=4,
+autocite=footnote,citetracker=true,sorting=none,
+doi=false, isbn=false, url=false]{biblatex}%,autocite=footnote
+\addbibresource{literature.bib}
+\renewbibmacro{in:}{}
+
+\usepackage{shortcite}
+
+%% IMPORTANT DATA
+\author{Firstname Lastname}
+\title[short title]{very long title with\newline linebreak} % Line breaks with \newline:
+%\titlegraphic{lorenz.pdf}
+\subtitle{optional subtitle}
+\institute{Institute for Numerical Mathematics}
+\date{\today}
+
+\begin{document}
+\frame[plain]{\titlepage}
+
+\begin{frame}{first page with content}
+    Test of command \texttt{\textbackslash footshortcite\{key\}} with minimal info\footshortcite{article01}
+\end{frame}
+
+\begin{frame}{second page with block}
+    Test of command \texttt{\textbackslash footshortcite\{key\}} inside block: 
+    \begin{block}{I am the heading of block}
+	block with cite\footshortcite{article02}
+    \end{block}
+\end{frame}
+
+\begin{frame}{third page with nested environments}
+    If the frame is more complicated and includes minipages, replace the command \texttt{\textbackslash footshortcite\{key\}} by 
+    a \texttt{\textbackslash supercite\{key\}} and \texttt{\textbackslash footshortcitetext\{key\}}.
+    \begin{minipage}[b]{0.4\textwidth}
+	\begin{block}{Block 1}
+	    first cite\supercite{article01}
+	\end{block}
+    \end{minipage}
+    \footshortcitetext{article01}
+    \hfill
+    \begin{minipage}[b]{0.4\textwidth}
+	\begin{block}{Block 2}
+	    second cite\supercite{article02}
+	\end{block}
+    \end{minipage}
+    \footshortcitetext{article02}
+\end{frame}
+
+\begin{frame}{References}
+    \printbibliography
+\end{frame}
+\end{document}

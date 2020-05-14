@@ -1,0 +1,12 @@
+# swap  and temporary files
+*.DS_Store
+*.swp
+*.bak
+*.sav
+
+# remove build directory
+build/
+
+# remove created pdf files
+*.pdf
+!figures/*.pdf
