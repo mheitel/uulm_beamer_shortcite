@@ -3,7 +3,7 @@
 
 % AUTHOR: Marcus Heitel
 % DATE: 04/07/2020 
-% LAST EDIT: 05/14/2020
+% LAST EDIT: 05/21/2020
 
 %********************************************************************************
 % the following code is an adaption from
@@ -150,10 +150,10 @@
 \newrobustcmd{\cbx@superscript}[1]%
 {%
     \mkbibsuperscript{#1}%
-    \iftoggle{cbx@blockcite}
-	{}
+    \iftoggle{cbx@blockcite}%
+	{}%
 	{\cbx@citehook%
-	 \global\let\cbx@citehook=\empty}
+	 \global\let\cbx@citehook=\empty}%
 }
 \BeforeBeginEnvironment{block}{\global\toggletrue{cbx@blockcite}}
 

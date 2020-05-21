@@ -2,9 +2,13 @@
 
 This repository provides a simple and clean template for LaTeX Beamer presentations with the Ulm University logo and colors. Furthermore, we provide a new cite command 
 ```
-footshorcite
+footshortcite{key}
 ```
-for citing biblatex entries with are directly printed in a short footnote.
+similar to the biblatex's footfullcite and a command similar to biblatex's footcitetext. 
+```
+footshortcitetext{key}
+```
+The footnotes only print minimum info for the cites.
 
 ## Getting Started
 
